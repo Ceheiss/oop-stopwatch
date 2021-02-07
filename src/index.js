@@ -1,7 +1,8 @@
 const StopWatch = function () {
+  // Private
   let initialValue = 0;
-  this.duration = 0;
-  this.isStopped = true;
+  let isStopped = true;
+  let internalDuration = 0;
 
   const computeTime = function () {
     const latestValue = Date.now();
@@ -9,9 +10,10 @@ const StopWatch = function () {
     return Math.round(timePassed * 100) / 100;
   };
 
+  // Public
   this.start = function () {
-    if (this.isStopped) {
-      this.isStopped = false;
+    if (isStopped) {
+      isStopped = false;
       initialValue = Date.now();
     } else {
       throw new Error('The Stopwatch already started');
@@ -19,18 +21,24 @@ const StopWatch = function () {
   };
 
   this.stop = function () {
-    if (!this.isStopped) {
-      this.isStopped = true;
-      this.duration = this.duration + computeTime();
+    if (!isStopped) {
+      isStopped = true;
+      internalDuration = internalDuration + computeTime();
     } else {
       throw new Error('The Stopwatch already stopped');
     }
   };
 
   this.reset = function () {
-    this.duration = 0;
+    internalDuration = 0;
     initialValue = 0;
   };
+
+  Object.defineProperty(this, 'duration', {
+    get: function () {
+      return internalDuration;
+    },
+  });
 };
 
 module.exports = StopWatch;
